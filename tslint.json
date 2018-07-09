@@ -1,0 +1,36 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "jsRules": {},
+  "rules": {
+    "quotemark": [true, "single"],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": {
+          "objects": "never",
+          "arrays": "always",
+          "functions": "never",
+          "typeLiterals": "ignore"
+        },
+        "singleline": "never",
+        "esSpecCompliant": true,
+        "arrow-parens": [true, "ban-single-arg-parens"]
+      }
+    ],
+    "ordered-imports": false,
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": false
+      }
+    ],
+    "no-console": false,
+    "comment-format": [true, "check-uppercase"]
+  },
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": ["node_modules"]
+  }
+}
