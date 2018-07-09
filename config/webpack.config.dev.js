@@ -24,6 +24,7 @@ module.exports = {
     publicPath: publicPath,
     path: paths.appBuild,
   },
+  devtool: 'eval',
   module: {
     rules: [
       {
