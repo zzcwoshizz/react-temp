@@ -17,11 +17,12 @@ module.exports = {
    * entry
    */
   entry: {
-    index: path.resolve(paths.appSrc, 'index.tsx')
+    index: path.resolve(paths.appSrc, 'index.tsx'),
   },
   output: {
     filename: 'static/js/[name].bundle.js',
-    publicPath: publicPath
+    publicPath: publicPath,
+    path: paths.appBuild,
   },
   module: {
     rules: [
@@ -33,7 +34,7 @@ module.exports = {
             loader: require.resolve('awesome-typescript-loader'),
             options: {
               configFileName: paths.appTsConfig,
-              useCache: true
+              useCache: true,
               // useBabel: true,
               // babelOptions: {
               //   babelrc: false,
@@ -45,9 +46,9 @@ module.exports = {
               //   ]
               // },
               // babelCore: '@babel/core'
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       {
         test: /\.scss$/,
@@ -56,8 +57,8 @@ module.exports = {
           {
             loader: require.resolve('css-loader'),
             options: {
-              importLoaders: 2
-            }
+              importLoaders: 2,
+            },
           },
           {
             loader: require.resolve('postcss-loader'),
@@ -70,20 +71,20 @@ module.exports = {
                     '>1%',
                     'last 4 versions',
                     'Firefox ESR',
-                    'not ie < 9'
+                    'not ie < 9',
                   ],
-                  flexbox: 'no-2009'
-                })
-              ]
-            }
+                  flexbox: 'no-2009',
+                }),
+              ],
+            },
           },
           {
             loader: 'sass-loader',
             options: {
-              includePaths: [path.resolve(paths.appSrc, 'scss')]
-            }
-          }
-        ]
+              includePaths: [path.resolve(paths.appSrc, 'scss')],
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
@@ -92,8 +93,8 @@ module.exports = {
           {
             loader: require.resolve('css-loader'),
             options: {
-              importLoaders: 1
-            }
+              importLoaders: 1,
+            },
           },
           {
             loader: require.resolve('postcss-loader'),
@@ -106,24 +107,24 @@ module.exports = {
                     '>1%',
                     'last 4 versions',
                     'Firefox ESR',
-                    'not ie < 9'
+                    'not ie < 9',
                   ],
-                  flexbox: 'no-2009'
-                })
-              ]
-            }
-          }
-        ]
+                  flexbox: 'no-2009',
+                }),
+              ],
+            },
+          },
+        ],
       },
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]'
-        }
-      }
-    ]
+          name: 'static/media/[name].[hash:8].[ext]',
+        },
+      },
+    ],
   },
   resolve: {
     extensions: [
@@ -136,29 +137,29 @@ module.exports = {
       '.js',
       '.json',
       '.web.jsx',
-      '.jsx'
-    ]
+      '.jsx',
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       inject: true,
       template: path.resolve(paths.appPublic, 'index.html'),
-      filename: 'index.html'
+      filename: 'index.html',
     }),
     new AutoDllPlugin({
       debug: true,
       inject: true,
       filename: '[name].[hash].js',
       entry: {
-        vendor: ['react', 'react-dom']
-      }
+        vendor: ['react', 'react-dom'],
+      },
     }),
     new CheckerPlugin(),
     new ForkTsCheckerWebpackPlugin({
       async: true,
       watch: paths.appSrc,
       tsconfig: paths.appTsConfig,
-      tslint: paths.appTsLint
-    })
-  ]
+      tslint: paths.appTsLint,
+    }),
+  ],
 };

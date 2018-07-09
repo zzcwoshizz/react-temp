@@ -4,6 +4,11 @@ import './style.scss';
 
 export default class App extends React.Component {
   public render() {
-    return <div>app1</div>;
+    return (
+      <div className="hero">
+        <h2 className="hero-1">REACT</h2>
+        <h2 className="hero-2">REACT</h2>
+      </div>
+    );
   }
 }

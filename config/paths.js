@@ -8,11 +8,10 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 module.exports = {
   appBuild: resolveApp('build'),
-  appDll: resolveApp('dll'),
   appPublic: resolveApp('public'),
   appSrc: resolveApp('src'),
   appPackageJson: resolveApp('package.json'),
   appTsConfig: resolveApp('tsconfig.json'),
   appTsProdConfig: resolveApp('tsconfig.prod.json'),
-  appTsLint: resolveApp('tslint.json')
+  appTsLint: resolveApp('tslint.json'),
 };

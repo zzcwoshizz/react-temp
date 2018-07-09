@@ -3,12 +3,12 @@
   "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
   "jsRules": {},
   "rules": {
-    "quotemark": [true, "single"],
+    "quotemark": [true, "single", "jsx-double"],
     "trailing-comma": [
       true,
       {
         "multiline": {
-          "objects": "never",
+          "objects": "always",
           "arrays": "always",
           "functions": "never",
           "typeLiterals": "ignore"

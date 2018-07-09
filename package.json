@@ -32,6 +32,7 @@
     "@types/webpack-env": "^1.13.6",
     "autodll-webpack-plugin": "^0.4.2",
     "awesome-typescript-loader": "^5.2.0",
+    "clean-webpack-plugin": "^0.1.19",
     "connect-history-api-fallback": "^1.5.0",
     "css-loader": "^0.28.11",
     "fork-ts-checker-webpack-plugin": "^0.4.2",
