@@ -3,6 +3,7 @@
 const AutoDllPlugin = require('autodll-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const path = require('path');
@@ -52,69 +53,87 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: [
-          require.resolve('style-loader'),
-          {
-            loader: require.resolve('css-loader'),
+        loader: ExtractTextPlugin.extract({
+          fallback: {
+            loader: require.resolve('style-loader'),
             options: {
-              importLoaders: 2,
+              hmr: false,
             },
           },
-          {
-            loader: require.resolve('postcss-loader'),
-            options: {
-              ident: 'postcss',
-              plugins: () => [
-                require('postcss-flexbugs-fixes'),
-                autoprefixer({
-                  browsers: [
-                    '>1%',
-                    'last 4 versions',
-                    'Firefox ESR',
-                    'not ie < 9',
-                  ],
-                  flexbox: 'no-2009',
-                }),
-              ],
+          use: [
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                importLoaders: 1,
+                minimize: true,
+              },
             },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              includePaths: [path.resolve(paths.appSrc, 'scss')],
+            {
+              loader: require.resolve('postcss-loader'),
+              options: {
+                // Necessary for external CSS imports to work
+                ident: 'postcss',
+                plugins: () => [
+                  require('postcss-flexbugs-fixes'),
+                  autoprefixer({
+                    browsers: [
+                      '>1%',
+                      'last 4 versions',
+                      'Firefox ESR',
+                      'not ie < 9', // React doesn't support IE8 anyway
+                    ],
+                    flexbox: 'no-2009',
+                  }),
+                ],
+              },
             },
-          },
-        ],
+            {
+              loader: 'sass-loader', // compiles Sass to CSS
+              options: {
+                includePaths: [path.resolve(paths.appSrc, 'scss')],
+              },
+            },
+          ],
+        }),
       },
       {
         test: /\.css$/,
-        use: [
-          require.resolve('style-loader'),
-          {
-            loader: require.resolve('css-loader'),
+        loader: ExtractTextPlugin.extract({
+          fallback: {
+            loader: require.resolve('style-loader'),
             options: {
-              importLoaders: 1,
+              hmr: false,
             },
           },
-          {
-            loader: require.resolve('postcss-loader'),
-            options: {
-              ident: 'postcss',
-              plugins: () => [
-                require('postcss-flexbugs-fixes'),
-                autoprefixer({
-                  browsers: [
-                    '>1%',
-                    'last 4 versions',
-                    'Firefox ESR',
-                    'not ie < 9',
-                  ],
-                  flexbox: 'no-2009',
-                }),
-              ],
+          use: [
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                importLoaders: 1,
+                minimize: true,
+              },
             },
-          },
-        ],
+            {
+              loader: require.resolve('postcss-loader'),
+              options: {
+                // Necessary for external CSS imports to work
+                ident: 'postcss',
+                plugins: () => [
+                  require('postcss-flexbugs-fixes'),
+                  autoprefixer({
+                    browsers: [
+                      '>1%',
+                      'last 4 versions',
+                      'Firefox ESR',
+                      'not ie < 9', // React doesn't support IE8 anyway
+                    ],
+                    flexbox: 'no-2009',
+                  }),
+                ],
+              },
+            },
+          ],
+        }),
       },
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
@@ -174,6 +193,9 @@ module.exports = {
     }),
     new CleanWebpackPlugin(['*'], {
       root: paths.appBuild,
+    }),
+    new ExtractTextPlugin({
+      filename: 'static/css/[name].[hash:8].css',
     }),
   ],
 };

@@ -35,6 +35,7 @@
     "clean-webpack-plugin": "^0.1.19",
     "connect-history-api-fallback": "^1.5.0",
     "css-loader": "^0.28.11",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "fork-ts-checker-webpack-plugin": "^0.4.2",
     "html-webpack-plugin": "^3.2.0",
     "http-proxy-middleware": "^0.18.0",
