@@ -4,7 +4,6 @@ const AutoDllPlugin = require('autodll-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 const paths = require('./paths');
 const publicPath = '/';
@@ -65,18 +64,7 @@ module.exports = {
             loader: require.resolve('postcss-loader'),
             options: {
               ident: 'postcss',
-              plugins: () => [
-                require('postcss-flexbugs-fixes'),
-                autoprefixer({
-                  browsers: [
-                    '>1%',
-                    'last 4 versions',
-                    'Firefox ESR',
-                    'not ie < 9',
-                  ],
-                  flexbox: 'no-2009',
-                }),
-              ],
+              plugins: () => [],
             },
           },
           {
@@ -101,18 +89,7 @@ module.exports = {
             loader: require.resolve('postcss-loader'),
             options: {
               ident: 'postcss',
-              plugins: () => [
-                require('postcss-flexbugs-fixes'),
-                autoprefixer({
-                  browsers: [
-                    '>1%',
-                    'last 4 versions',
-                    'Firefox ESR',
-                    'not ie < 9',
-                  ],
-                  flexbox: 'no-2009',
-                }),
-              ],
+              plugins: () => [],
             },
           },
         ],
