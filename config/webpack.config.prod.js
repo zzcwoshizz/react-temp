@@ -28,120 +28,141 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        include: paths.appSrc,
-        use: [
+        oneOf: [
+          // js
           {
-            loader: require.resolve('awesome-typescript-loader'),
+            test: /\.(js|jsx|mjs)$/,
+            include: paths.appSrc,
+            loader: 'babel-loader',
             options: {
-              configFileName: paths.appTsConfig,
-              useCache: true,
-              // useBabel: true,
-              // babelOptions: {
-              //   babelrc: false,
-              //   presets: [
-              //     [
-              //       '@babel/preset-env',
-              //       { targets: 'last 2 versions, ie 11', modules: false }
-              //     ]
-              //   ]
-              // },
-              // babelCore: '@babel/core'
+              cacheDirectory: true,
+            },
+          },
+          // ts
+          {
+            test: /\.tsx?$/,
+            include: paths.appSrc,
+            use: [
+              {
+                loader: require.resolve('awesome-typescript-loader'),
+                options: {
+                  configFileName: paths.appTsConfig,
+                  useCache: true,
+                  // useBabel: true,
+                  // babelOptions: {
+                  //   babelrc: false,
+                  //   presets: [
+                  //     [
+                  //       '@babel/preset-env',
+                  //       { targets: 'last 2 versions, ie 11', modules: false }
+                  //     ]
+                  //   ]
+                  // },
+                  // babelCore: '@babel/core'
+                },
+              },
+            ],
+          },
+          {
+            test: /\.scss$/,
+            loader: ExtractTextPlugin.extract({
+              fallback: {
+                loader: require.resolve('style-loader'),
+                options: {
+                  hmr: false,
+                },
+              },
+              use: [
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: 1,
+                    minimize: true,
+                  },
+                },
+                {
+                  loader: require.resolve('postcss-loader'),
+                  options: {
+                    // Necessary for external CSS imports to work
+                    ident: 'postcss',
+                    plugins: () => [
+                      require('postcss-flexbugs-fixes'),
+                      autoprefixer({
+                        browsers: [
+                          '>1%',
+                          'last 4 versions',
+                          'Firefox ESR',
+                          'not ie < 9', // React doesn't support IE8 anyway
+                        ],
+                        flexbox: 'no-2009',
+                      }),
+                    ],
+                  },
+                },
+                {
+                  loader: 'sass-loader', // compiles Sass to CSS
+                  options: {
+                    includePaths: [path.resolve(paths.appSrc, 'scss')],
+                  },
+                },
+              ],
+            }),
+          },
+          {
+            test: /\.css$/,
+            loader: ExtractTextPlugin.extract({
+              fallback: {
+                loader: require.resolve('style-loader'),
+                options: {
+                  hmr: false,
+                },
+              },
+              use: [
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: 1,
+                    minimize: true,
+                  },
+                },
+                {
+                  loader: require.resolve('postcss-loader'),
+                  options: {
+                    // Necessary for external CSS imports to work
+                    ident: 'postcss',
+                    plugins: () => [
+                      require('postcss-flexbugs-fixes'),
+                      autoprefixer({
+                        browsers: [
+                          '>1%',
+                          'last 4 versions',
+                          'Firefox ESR',
+                          'not ie < 9', // React doesn't support IE8 anyway
+                        ],
+                        flexbox: 'no-2009',
+                      }),
+                    ],
+                  },
+                },
+              ],
+            }),
+          },
+          {
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
+            loader: 'url-loader',
+            options: {
+              limit: 10000,
+              name: 'static/media/[name].[hash:8].[ext]',
+            },
+          },
+          {
+            exclude: [/\.(js|jsx|mjs|ts|tsx)$/, /\.html$/, /\.json$/],
+            loader: require.resolve('file-loader'),
+            options: {
+              name: 'static/media/[name].[hash:8].[ext]',
             },
           },
         ],
-      },
-      {
-        test: /\.scss$/,
-        loader: ExtractTextPlugin.extract({
-          fallback: {
-            loader: require.resolve('style-loader'),
-            options: {
-              hmr: false,
-            },
-          },
-          use: [
-            {
-              loader: require.resolve('css-loader'),
-              options: {
-                importLoaders: 1,
-                minimize: true,
-              },
-            },
-            {
-              loader: require.resolve('postcss-loader'),
-              options: {
-                // Necessary for external CSS imports to work
-                ident: 'postcss',
-                plugins: () => [
-                  require('postcss-flexbugs-fixes'),
-                  autoprefixer({
-                    browsers: [
-                      '>1%',
-                      'last 4 versions',
-                      'Firefox ESR',
-                      'not ie < 9', // React doesn't support IE8 anyway
-                    ],
-                    flexbox: 'no-2009',
-                  }),
-                ],
-              },
-            },
-            {
-              loader: 'sass-loader', // compiles Sass to CSS
-              options: {
-                includePaths: [path.resolve(paths.appSrc, 'scss')],
-              },
-            },
-          ],
-        }),
-      },
-      {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract({
-          fallback: {
-            loader: require.resolve('style-loader'),
-            options: {
-              hmr: false,
-            },
-          },
-          use: [
-            {
-              loader: require.resolve('css-loader'),
-              options: {
-                importLoaders: 1,
-                minimize: true,
-              },
-            },
-            {
-              loader: require.resolve('postcss-loader'),
-              options: {
-                // Necessary for external CSS imports to work
-                ident: 'postcss',
-                plugins: () => [
-                  require('postcss-flexbugs-fixes'),
-                  autoprefixer({
-                    browsers: [
-                      '>1%',
-                      'last 4 versions',
-                      'Firefox ESR',
-                      'not ie < 9', // React doesn't support IE8 anyway
-                    ],
-                    flexbox: 'no-2009',
-                  }),
-                ],
-              },
-            },
-          ],
-        }),
-      },
-      {
-        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]',
-        },
       },
     ],
   },

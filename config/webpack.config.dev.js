@@ -27,80 +27,101 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        include: paths.appSrc,
-        use: [
+        oneOf: [
+          // js
           {
-            loader: require.resolve('awesome-typescript-loader'),
+            test: /\.(js|jsx|mjs)$/,
+            include: paths.appSrc,
+            loader: 'babel-loader',
             options: {
-              configFileName: paths.appTsConfig,
-              useCache: true,
-              // useBabel: true,
-              // babelOptions: {
-              //   babelrc: false,
-              //   presets: [
-              //     [
-              //       '@babel/preset-env',
-              //       { targets: 'last 2 versions, ie 11', modules: false }
-              //     ]
-              //   ]
-              // },
-              // babelCore: '@babel/core'
+              cacheDirectory: true,
+            },
+          },
+          // ts
+          {
+            test: /\.tsx?$/,
+            include: paths.appSrc,
+            use: [
+              {
+                loader: require.resolve('awesome-typescript-loader'),
+                options: {
+                  configFileName: paths.appTsConfig,
+                  useCache: true,
+                  // useBabel: true,
+                  // babelOptions: {
+                  //   babelrc: false,
+                  //   presets: [
+                  //     [
+                  //       '@babel/preset-env',
+                  //       { targets: 'last 2 versions, ie 11', modules: false }
+                  //     ]
+                  //   ]
+                  // },
+                  // babelCore: '@babel/core'
+                },
+              },
+            ],
+          },
+          {
+            test: /\.scss$/,
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  importLoaders: 2,
+                },
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [],
+                },
+              },
+              {
+                loader: 'sass-loader',
+                options: {
+                  includePaths: [path.resolve(paths.appSrc, 'scss')],
+                },
+              },
+            ],
+          },
+          {
+            test: /\.css$/,
+            use: [
+              require.resolve('style-loader'),
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  importLoaders: 1,
+                },
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [],
+                },
+              },
+            ],
+          },
+          {
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
+            loader: 'url-loader',
+            options: {
+              limit: 10000,
+              name: 'static/media/[name].[hash:8].[ext]',
+            },
+          },
+          {
+            exclude: [/\.(js|jsx|mjs|ts|tsx)$/, /\.html$/, /\.json$/],
+            loader: require.resolve('file-loader'),
+            options: {
+              name: 'static/media/[name].[hash:8].[ext]',
             },
           },
         ],
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          require.resolve('style-loader'),
-          {
-            loader: require.resolve('css-loader'),
-            options: {
-              importLoaders: 2,
-            },
-          },
-          {
-            loader: require.resolve('postcss-loader'),
-            options: {
-              ident: 'postcss',
-              plugins: () => [],
-            },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              includePaths: [path.resolve(paths.appSrc, 'scss')],
-            },
-          },
-        ],
-      },
-      {
-        test: /\.css$/,
-        use: [
-          require.resolve('style-loader'),
-          {
-            loader: require.resolve('css-loader'),
-            options: {
-              importLoaders: 1,
-            },
-          },
-          {
-            loader: require.resolve('postcss-loader'),
-            options: {
-              ident: 'postcss',
-              plugins: () => [],
-            },
-          },
-        ],
-      },
-      {
-        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: 'static/media/[name].[hash:8].[ext]',
-        },
       },
     ],
   },
