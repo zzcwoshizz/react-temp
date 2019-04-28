@@ -38,7 +38,8 @@
     "jsx-no-lambda": false,
     "no-var-requires": false,
     "no-unused-expression": false,
-    "prefer-for-of": false
+    "prefer-for-of": false,
+    "max-classes-per-file": true
   },
   "rulesDirectory": [],
   "linterOptions": {

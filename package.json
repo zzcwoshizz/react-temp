@@ -4,16 +4,20 @@
   "description": "react starter",
   "main": "index.js",
   "scripts": {
-    "start": "node ./script/start.js",
+    "start": "wp --config ./config/webpack.config.dev.js",
     "build": "webpack --config ./config/webpack.config.prod.js",
     "lint": "tslint --project . --config tslint.json"
   },
-  "pre-commit": ["lint"],
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zzcwoshizz/z-react-cli.git"
   },
-  "keywords": ["react"],
+  "keywords": [
+    "react"
+  ],
   "author": "zhichao.zhang <zzcwoshizz1@gmail.com>",
   "license": "MIT",
   "bugs": {
@@ -30,10 +34,11 @@
     "@types/webpack": "^4.4.5",
     "@types/webpack-env": "^1.13.6",
     "autodll-webpack-plugin": "^0.4.2",
-    "awesome-typescript-loader": "^5.2.0",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.0-beta.4",
     "clean-webpack-plugin": "^0.1.19",
     "connect-history-api-fallback": "^1.5.0",
+    "copy-webpack-plugin": "^5.0.3",
     "css-loader": "^0.28.11",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.11",
@@ -50,14 +55,16 @@
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.13.0",
     "tslint-react": "^3.6.0",
-    "typescript": "^2.9.2",
+    "typescript": "^3.4.3",
     "url-loader": "^1.0.1",
-    "webpack": "^4.15.1",
-    "webpack-cli": "^3.0.8",
-    "webpack-serve": "^1.0.4"
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0",
+    "webpack-nano": "^0.6.1",
+    "webpack-plugin-serve": "^0.8.0",
+    "webpack-serve": "^3.1.0"
   },
   "dependencies": {
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }

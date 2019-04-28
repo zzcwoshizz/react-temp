@@ -1,7 +1,9 @@
 'use strict';
 
+const { WebpackPluginServe: Serve } = require('webpack-plugin-serve');
 const AutoDllPlugin = require('autodll-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
@@ -15,9 +17,10 @@ module.exports = {
   /**
    * entry
    */
-  entry: {
-    index: path.resolve(paths.appSrc, 'index.tsx'),
-  },
+  entry: [
+    path.resolve(paths.appSrc, 'index.tsx'),
+    'webpack-plugin-serve/client',
+  ],
   output: {
     filename: 'static/js/[name].bundle.js',
     publicPath: publicPath,
@@ -153,6 +156,12 @@ module.exports = {
         vendor: ['react', 'react-dom'],
       },
     }),
+    new CopyWebpackPlugin([
+      {
+        from: paths.appPublic,
+        to: paths.appBuild,
+      },
+    ]),
     new CheckerPlugin(),
     new ForkTsCheckerWebpackPlugin({
       async: true,
@@ -160,5 +169,17 @@ module.exports = {
       tsconfig: paths.appTsConfig,
       tslint: paths.appTsLint,
     }),
+    new Serve({
+      open: true,
+      port: 8080,
+      host: 'localhost',
+      hmr: true,
+      historyFallback: true,
+      static: paths.appBuild,
+      middleware: (app, builtins) => {
+        // app.use(builtins.proxy('/api', { target: 'http://localhost:8081' }));
+      },
+    }),
   ],
+  watch: true,
 };

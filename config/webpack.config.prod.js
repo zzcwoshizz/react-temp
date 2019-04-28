@@ -1,5 +1,6 @@
 'use strict';
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const AutoDllPlugin = require('autodll-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -206,6 +207,12 @@ module.exports = {
         vendor: ['react', 'react-dom'],
       },
     }),
+    new CopyWebpackPlugin([
+      {
+        from: paths.appPublic,
+        to: paths.appBuild,
+      },
+    ]),
     new ForkTsCheckerWebpackPlugin({
       async: false,
       watch: paths.appSrc,
