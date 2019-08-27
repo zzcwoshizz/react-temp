@@ -21,7 +21,7 @@
     ],
     "ordered-imports": false,
     "prefer-const": [
-      "error",
+      true,
       {
         "destructuring": "any",
         "ignoreReadBeforeAssign": false

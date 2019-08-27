@@ -7,7 +7,11 @@
     "allowJs": false,
     "declaration": true,
     "jsx": "react",
-    "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules"]
