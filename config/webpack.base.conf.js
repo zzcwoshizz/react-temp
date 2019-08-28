@@ -64,6 +64,12 @@ module.exports = {
           { loader: 'css-loader' },
           { loader: 'postcss-loader' },
           { loader: 'sass-loader' },
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: [path.resolve(__dirname, '../src/style.scss')],
+            },
+          },
         ],
       },
     ],
