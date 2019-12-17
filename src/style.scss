@@ -2,9 +2,11 @@
   0% {
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
   }
+
   50% {
     clip-path: polygon(100% 10%, 100% 100%, 0% 100%, 90% 0%);
   }
+
   100% {
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
   }
@@ -22,6 +24,7 @@ body {
     margin-bottom: 20px;
     height: 40px;
     position: relative;
+
     .hero-1,
     .hero-2 {
       font-weight: bolder;
@@ -32,9 +35,11 @@ body {
       font-size: 36px;
       color: #333;
     }
+
     .hero-1 {
       color: #26c6da;
     }
+
     .hero-2 {
       color: #7e57c2;
       clip-path: polygon(100% 10%, 100% 100%, 0% 100%, 90% 0%);

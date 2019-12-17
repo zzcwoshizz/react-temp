@@ -15,6 +15,7 @@ module.exports = {
     warnings: false,
     errors: true,
   },
+  disableHostCheck: true,
   contentBase: path.resolve(__dirname, '../static'),
   proxy: {
     '/api': {

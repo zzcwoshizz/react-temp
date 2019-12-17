@@ -55,19 +55,53 @@ module.exports = {
         ],
       },
       {
-        // scss css
-        test: /\.s?(c|a)ss$/,
+        // css
+        test: /\.css$/,
+        use: [
+          { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
+          { loader: 'css-loader' },
+          { loader: 'postcss-loader' },
+        ],
+      },
+      {
+        // scss sass
+        test: /\.s(c|a)ss$/,
         // use里的loader执行顺序为从下到上，loader的顺序要注意
         // 这里检测到scss/css文件后需要将后续处理loader都写在此use里,如果scss和css过分开检测处理，不能说先用scss-loader转成css，然后让它走/\.css/里的use
         use: [
           { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
           { loader: 'css-loader' },
           { loader: 'postcss-loader' },
-          { loader: 'sass-loader' },
+          {
+            loader: 'sass-loader',
+            options: { implementation: require('sass') },
+          },
           {
             loader: 'sass-resources-loader',
             options: {
-              resources: [path.resolve(__dirname, '../src/style.scss')],
+              resources: [
+                path.resolve(__dirname, '../src/assets/styles/_variables.scss'),
+              ],
+            },
+          },
+        ],
+      },
+      {
+        // less
+        test: /\.less$/,
+        use: [
+          { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
+          { loader: 'css-loader' },
+          { loader: 'postcss-loader' },
+          {
+            loader: 'less-loader',
+          },
+          {
+            loader: 'style-resources-loader',
+            options: {
+              patterns: [
+                path.resolve(__dirname, '../src/assets/styles/_variables.less'),
+              ],
             },
           },
         ],
@@ -80,6 +114,7 @@ module.exports = {
       filename: 'index.html',
       title: 'React Start',
       inject: true,
+      minify: !isDev,
     }),
     new webpack.optimize.SplitChunksPlugin(),
     // 将一些不太可能改动的第三方库单独打包，会通过缓存极大提升打包速度

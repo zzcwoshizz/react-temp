@@ -12,6 +12,7 @@ module.exports = merge(baseConfig, {
     rules: [],
   },
   plugins: [
+    require('autoprefixer'),
     new CleanWebpackPlugin({
       root: path.resolve(__dirname, '../'),
     }),
