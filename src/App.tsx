@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import './style.scss';
 import './style.less';
 
 export default class App extends React.Component {

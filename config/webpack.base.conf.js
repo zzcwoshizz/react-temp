@@ -80,7 +80,8 @@ module.exports = {
             loader: 'sass-resources-loader',
             options: {
               resources: [
-                path.resolve(__dirname, '../src/assets/styles/_variables.scss'),
+                // 加载全局的scss文件
+                // path.resolve(__dirname, '../src/assets/styles/_variables.scss'),
               ],
             },
           },
@@ -100,7 +101,8 @@ module.exports = {
             loader: 'style-resources-loader',
             options: {
               patterns: [
-                path.resolve(__dirname, '../src/assets/styles/_variables.less'),
+                // 加载全局的less文件
+                // path.resolve(__dirname, '../src/assets/styles/_variables.less'),
               ],
             },
           },

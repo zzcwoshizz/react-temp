@@ -2,19 +2,18 @@ const path = require('path');
 
 module.exports = {
   // devserver启动服务的根路径
-  contentBase: path.resolve(__dirname, '../dist'),
   open: true,
-  openPage: '',
   port: 3000,
   quiet: true,
   hot: true,
-  allowedHosts: ['0.0.0.0'],
-  clientLogLevel: 'none',
   historyApiFallback: true,
+  clientLogLevel: 'none',
   overlay: {
     warnings: false,
     errors: true,
   },
+  noInfo: true,
+  stats: 'none',
   disableHostCheck: true,
   contentBase: path.resolve(__dirname, '../static'),
   proxy: {

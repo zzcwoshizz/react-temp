@@ -1,10 +1,10 @@
 {
-  "name": "z-react-cli",
+  "name": "react-temp",
   "version": "1.0.0",
-  "description": "react starter",
+  "description": "react temp",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --progress --config config/webpack.dev.conf.js",
+    "dev": "cross-env NODE_ENV=development node scripts/start.js",
     "build": "cross-env NODE_ENV=production node scripts/build.js",
     "lint": "tslint --project . --config tslint.json"
   },
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zzcwoshizz/z-react-cli.git"
+    "url": "git+https://github.com/zzcwoshizz/react-temp.git"
   },
   "keywords": [
     "react"
@@ -23,9 +23,9 @@
   "author": "zhichao.zhang <zzcwoshizz1@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zzcwoshizz/z-react-cli/issues"
+    "url": "https://github.com/zzcwoshizz/react-temp/issues"
   },
-  "homepage": "https://github.com/zzcwoshizz/z-react-cli#readme",
+  "homepage": "https://github.com/zzcwoshizz/react-temp#readme",
   "devDependencies": {
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",

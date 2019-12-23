@@ -1,17 +1,22 @@
 const webpack = require('webpack');
 const config = require('../config/webpack.prod.conf');
 
-webpack(config, (err, stats) => {
-  if (err || stats.hasErrors()) {
-    // 在这里处理错误
-    console.error(err);
+const compiler = webpack(config);
+
+compiler.run((err, stats) => {
+  if (err) {
+    console.error(err.stack || err);
+    if (err.details) {
+      console.error(err.details);
+    }
     return;
   }
-  // 处理完成
-  console.log(
-    stats.toString({
-      chunks: false, // 使构建过程更静默无输出
-      colors: true, // 在控制台展示颜色
-    })
-  );
+
+  const info = stats.toJson();
+
+  if (stats.hasErrors()) {
+    console.error(info.errors);
+  }
+
+  process.stdout.write(stats.toString() + '\n');
 });
