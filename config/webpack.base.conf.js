@@ -132,7 +132,18 @@ module.exports = {
       filename: '[name].[hash].js',
       path: 'vendor',
       entry: {
-        vendor: ['react', 'react-dom'],
+        vendor: [
+          'react',
+          'react-dom',
+          'react-router-dom',
+          'mobx',
+          'mobx-react',
+          'mobx-react-router',
+          'react-loadable',
+          'nprogress',
+          'antd',
+          'isomorphic-fetch',
+        ],
       },
     }),
     new ForkTsChecker({

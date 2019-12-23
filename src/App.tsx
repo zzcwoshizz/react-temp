@@ -1,14 +1,18 @@
-import * as React from 'react';
+import React from 'react';
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/es/locale/zh_CN';
+import moment from 'moment';
 
-import './style.less';
+import Routes from './routes';
+
+moment.locale('zh-cn');
 
 export default class App extends React.Component {
   public render() {
     return (
-      <div className="hero">
-        <h2 className="hero-1">REACT</h2>
-        <h2 className="hero-2">REACT</h2>
-      </div>
+      <ConfigProvider locale={zhCN}>
+        <Routes />
+      </ConfigProvider>
     );
   }
 }
