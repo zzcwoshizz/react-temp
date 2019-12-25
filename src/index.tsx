@@ -1,3 +1,4 @@
+///<reference types="webpack-env" />
 import React from 'react';
 import * as ReactDOM from 'react-dom';
 
