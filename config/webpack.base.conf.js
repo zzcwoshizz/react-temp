@@ -7,6 +7,21 @@ const ForkTsChecker = require('fork-ts-checker-webpack-plugin');
 
 const isDev = process.env.NODE_ENV === 'development';
 
+const cssLoader = [
+  { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
+  {
+    loader: 'px2vw-view-loader',
+    query: {
+      viewportWidth: 375,
+      viewportUnit: 'vw',
+      minPixelValue: 1,
+      decimal: 6,
+    },
+  },
+  { loader: 'css-loader' },
+  ...(isDev ? [] : [{ loader: 'postcss-loader' }]),
+];
+
 // TODU 项目大了之后可加入happypack和thread-loader加速构建速度
 module.exports = {
   entry: {
@@ -57,11 +72,7 @@ module.exports = {
       {
         // css
         test: /\.css$/,
-        use: [
-          { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
-          { loader: 'css-loader' },
-          { loader: 'postcss-loader' },
-        ],
+        use: cssLoader,
       },
       {
         // scss sass
@@ -69,9 +80,7 @@ module.exports = {
         // use里的loader执行顺序为从下到上，loader的顺序要注意
         // 这里检测到scss/css文件后需要将后续处理loader都写在此use里,如果scss和css过分开检测处理，不能说先用scss-loader转成css，然后让它走/\.css/里的use
         use: [
-          { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
-          { loader: 'css-loader' },
-          { loader: 'postcss-loader' },
+          ...cssLoader,
           {
             loader: 'sass-loader',
             options: { implementation: require('sass') },
@@ -91,9 +100,7 @@ module.exports = {
         // less
         test: /\.less$/,
         use: [
-          { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
-          { loader: 'css-loader' },
-          { loader: 'postcss-loader' },
+          ...cssLoader,
           {
             loader: 'less-loader',
             options: {
@@ -128,7 +135,6 @@ module.exports = {
       // will inject the DLL bundle to index.html
       // default false
       inject: true,
-      debug: false,
       filename: '[name].[hash].js',
       path: 'vendor',
       entry: {
