@@ -15,7 +15,7 @@ module.exports = {
   noInfo: true,
   stats: 'none',
   disableHostCheck: true,
-  contentBase: path.resolve(__dirname, '../static'),
+  contentBase: path.resolve(__dirname, '..'),
   proxy: {
     '/api': {
       target: 'http://localhost:3000',
