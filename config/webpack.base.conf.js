@@ -9,15 +9,6 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const cssLoader = [
   { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
-  {
-    loader: 'px2vw-view-loader',
-    query: {
-      viewportWidth: 375,
-      viewportUnit: 'vw',
-      minPixelValue: 1,
-      decimal: 6,
-    },
-  },
   { loader: 'css-loader' },
   ...(isDev ? [] : [{ loader: 'postcss-loader' }]),
 ];

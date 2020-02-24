@@ -39,7 +39,8 @@
     "no-var-requires": false,
     "no-unused-expression": false,
     "prefer-for-of": false,
-    "max-classes-per-file": true
+    "max-classes-per-file": true,
+    "member-access": false
   },
   "rulesDirectory": [],
   "linterOptions": {
