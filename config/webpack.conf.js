@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const AutoDllPlugin = require('autodll-webpack-plugin');
 const ForkTsChecker = require('fork-ts-checker-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -13,11 +16,72 @@ const cssLoader = [
   ...(isDev ? [] : [{ loader: 'postcss-loader' }]),
 ];
 
+function getPlugins() {
+  const _plugins = [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, '../src', 'index.html'),
+      filename: 'index.html',
+      title: 'React Start',
+      inject: true,
+      minify: !isDev,
+    }),
+    new webpack.optimize.SplitChunksPlugin(),
+    new ForkTsChecker({
+      async: false,
+      checkSyntacticErrors: true,
+      watch: path.resolve(__dirname, '..', 'src'),
+      tsconfig: path.resolve(__dirname, '..', 'tsconfig.json'),
+      tslint: path.resolve(__dirname, '..', 'tslint.json'),
+    }),
+  ];
+  const prodPlugins = [
+    require('autoprefixer'),
+    new CleanWebpackPlugin({
+      root: path.resolve(__dirname, '../'),
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].[hash].css',
+      chunkFilename: 'css/[name].[hash].css',
+    }),
+    new CopyPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: path.resolve(__dirname, '../dist/static'),
+      },
+    ]),
+  ];
+  const devPlugins = [
+    // 将一些不太可能改动的第三方库单独打包，会通过缓存极大提升打包速度
+    new AutoDllPlugin({
+      debug: isDev,
+      // will inject the DLL bundle to index.html
+      // default false
+      inject: true,
+      filename: '[name].[hash].js',
+      path: 'vendor',
+      entry: {
+        vendor: ['react', 'react-dom'],
+      },
+    }),
+    new FriendlyErrorsWebpackPlugin(),
+    // 热更新相关
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+  ];
+
+  return isDev ? _plugins.concat(devPlugins) : _plugins.concat(prodPlugins);
+}
+
 // TODU 项目大了之后可加入happypack和thread-loader加速构建速度
 module.exports = {
-  entry: {
-    app: path.resolve(__dirname, '../src/index.tsx'),
-  },
+  target: 'node',
+  mode: isDev ? 'development' : 'production',
+  entry: isDev
+    ? [
+        'webpack-hot-middleware/client',
+        path.resolve(__dirname, '../src/server.tsx'),
+      ]
+    : path.resolve(__dirname, '../src/server.tsx'),
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: 'js/[name].[hash].js',
@@ -111,35 +175,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../src', 'index.html'),
-      filename: 'index.html',
-      title: 'React Start',
-      inject: true,
-      minify: !isDev,
-    }),
-    new webpack.optimize.SplitChunksPlugin(),
-    // 将一些不太可能改动的第三方库单独打包，会通过缓存极大提升打包速度
-    new AutoDllPlugin({
-      debug: isDev,
-      // will inject the DLL bundle to index.html
-      // default false
-      inject: true,
-      filename: '[name].[hash].js',
-      path: 'vendor',
-      entry: {
-        vendor: ['react', 'react-dom'],
-      },
-    }),
-    new ForkTsChecker({
-      async: false,
-      checkSyntacticErrors: true,
-      watch: path.resolve(__dirname, '..', 'src'),
-      tsconfig: path.resolve(__dirname, '..', 'tsconfig.json'),
-      tslint: path.resolve(__dirname, '..', 'tslint.json'),
-    }),
-  ],
+  plugins: getPlugins(),
   resolve: {
     alias: {
       // 这个为src配置别名，非必需，为方便而已
@@ -148,4 +184,23 @@ module.exports = {
     // 在import这些拓展名的文件时，可以省略拓展名
     extensions: ['*', '.js', '.json', '.ts', '.tsx'],
   },
+  optimization: isDev
+    ? undefined
+    : {
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendors: {
+              test: /[\\/]node_modules[\\/]/,
+              priority: -10,
+            },
+            common: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+              minSize: 0,
+            },
+          },
+        },
+      },
 };
