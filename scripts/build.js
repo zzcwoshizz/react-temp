@@ -1,13 +1,16 @@
+const chalk = require('chalk');
 const webpack = require('webpack');
 const config = require('../config/webpack.conf');
 
 const compiler = webpack(config);
 
+console.log('Start production build...');
+
 compiler.run((err, stats) => {
   if (err) {
-    console.error(err.stack || err);
+    console.log(chalk.red(err.stack || err));
     if (err.details) {
-      console.error(err.details);
+      console.log(chalk.red(err.details));
     }
     return;
   }
@@ -15,8 +18,9 @@ compiler.run((err, stats) => {
   const info = stats.toJson();
 
   if (stats.hasErrors()) {
-    console.error(info.errors);
+    console.log(chalk.red(info.errors));
+    return;
   }
 
-  process.stdout.write(stats.toString() + '\n');
+  console.log(chalk.green('Compiled successfully.\n'));
 });

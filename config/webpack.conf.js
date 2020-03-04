@@ -7,8 +7,10 @@ const ForkTsChecker = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const env = require('./env');
+const paths = require('./paths');
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = env.NODE_ENV === 'development';
 
 const cssLoader = [
   { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
@@ -19,9 +21,9 @@ const cssLoader = [
 function getPlugins() {
   const _plugins = [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../src', 'index.html'),
+      template: paths.htmlPath,
       filename: 'index.html',
-      title: 'React Start',
+      title: require('../package.json').name,
       inject: true,
       minify: !isDev,
     }),
@@ -29,9 +31,9 @@ function getPlugins() {
     new ForkTsChecker({
       async: false,
       checkSyntacticErrors: true,
-      watch: path.resolve(__dirname, '..', 'src'),
-      tsconfig: path.resolve(__dirname, '..', 'tsconfig.json'),
-      tslint: path.resolve(__dirname, '..', 'tslint.json'),
+      watch: paths.srcPath,
+      tsconfig: paths.tsPath,
+      tslint: paths.tsLintPath,
     }),
   ];
   const prodPlugins = [
@@ -46,7 +48,7 @@ function getPlugins() {
     new CopyPlugin([
       {
         from: path.resolve(__dirname, '../static'),
-        to: path.resolve(__dirname, '../dist/static'),
+        to: path.resolve(paths.buildPath, 'static'),
       },
     ]),
   ];
@@ -63,7 +65,14 @@ function getPlugins() {
         vendor: ['react', 'react-dom'],
       },
     }),
-    new FriendlyErrorsWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin({
+      compilationSuccessInfo: {
+        messages: [
+          `Your application is running here: http:localhost:${env.PORT}`,
+        ],
+      },
+      clearConsole: true,
+    }),
     // 热更新相关
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
@@ -74,18 +83,17 @@ function getPlugins() {
 
 // TODU 项目大了之后可加入happypack和thread-loader加速构建速度
 module.exports = {
-  target: 'node',
   mode: isDev ? 'development' : 'production',
   entry: isDev
     ? [
-        'webpack-hot-middleware/client',
-        path.resolve(__dirname, '../src/server.tsx'),
+        'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000',
+        path.resolve(paths.srcPath, 'index.tsx'),
       ]
-    : path.resolve(__dirname, '../src/server.tsx'),
+    : path.resolve(paths.srcPath, 'index.tsx'),
   output: {
-    path: path.resolve(__dirname, '../dist'),
+    path: paths.buildPath,
     filename: 'js/[name].[hash].js',
-    publicPath: '/',
+    publicPath: paths.publicPath,
   },
   module: {
     rules: [
@@ -179,7 +187,7 @@ module.exports = {
   resolve: {
     alias: {
       // 这个为src配置别名，非必需，为方便而已
-      '@': path.resolve(__dirname, '../src'),
+      '@': paths.srcPath,
     },
     // 在import这些拓展名的文件时，可以省略拓展名
     extensions: ['*', '.js', '.json', '.ts', '.tsx'],
