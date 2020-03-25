@@ -1,12 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const AutoDllPlugin = require('autodll-webpack-plugin');
-const ForkTsChecker = require('fork-ts-checker-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
 const { loadableTransformer } = require('loadable-ts-transformer');
-const LoadablePlugin = require('@loadable/webpack-plugin');
 
 const env = require('./env');
 const paths = require('./paths');
@@ -14,80 +9,28 @@ const paths = require('./paths');
 const isDev = env.NODE_ENV === 'development';
 
 const cssLoader = [
-  { loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader },
+  { loader: 'isomorphic-style-loader' },
   { loader: 'css-loader' },
-  ...(isDev ? [] : [{ loader: 'postcss-loader' }]),
 ];
 
 let hash = isDev ? 'hash' : 'contenthash';
 
-function getPlugins() {
-  const _plugins = [
-    new webpack.optimize.SplitChunksPlugin(),
-    new ForkTsChecker({
-      async: false,
-      checkSyntacticErrors: true,
-      watch: paths.srcPath,
-      tsconfig: paths.tsPath,
-      tslint: paths.tsLintPath,
-    }),
-    new LoadablePlugin(),
-  ];
-  const prodPlugins = [
-    require('autoprefixer'),
-    new MiniCssExtractPlugin({
-      filename: `css/[name].[${hash}].css`,
-      chunkFilename: `css/[name].[${hash}].css`,
-    }),
-    new CopyPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: path.resolve(paths.buildPath, 'static'),
-      },
-    ]),
-  ];
-  const devPlugins = [
-    // 将一些不太可能改动的第三方库单独打包，会通过缓存极大提升打包速度
-    new AutoDllPlugin({
-      debug: isDev,
-      // will inject the DLL bundle to index.html
-      // default false
-      inject: true,
-      filename: `vendor.dll.js`,
-      entry: {
-        vendor: ['react', 'react-dom'],
-      },
-    }),
-    new FriendlyErrorsWebpackPlugin({
-      compilationSuccessInfo: {
-        messages: [],
-      },
-      clearConsole: false,
-    }),
-    // 热更新相关
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-  ];
-
-  return isDev ? _plugins.concat(devPlugins) : _plugins.concat(prodPlugins);
-}
-
 // TODU 项目大了之后可加入happypack和thread-loader加速构建速度
 module.exports = {
+  target: 'node',
+  node: false,
   mode: isDev ? 'development' : 'production',
-  entry: isDev
-    ? {
-        [paths.entry]: [
-          'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000',
-          path.resolve(paths.srcPath, 'client.tsx'),
-        ],
-      }
-    : { [paths.entry]: path.resolve(paths.srcPath, 'client.tsx') },
+  entry: { [paths.entry]: path.resolve(paths.srcPath, 'server.tsx') },
   output: {
     path: paths.buildPath,
-    filename: `js/[name].[${hash}].js`,
-    publicPath: paths.publicPath,
+    filename: `server.[${hash}].js`,
+    libraryTarget: 'commonjs2',
   },
+  plugins: [
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
+  ],
   module: {
     rules: [
       {
@@ -177,7 +120,6 @@ module.exports = {
       },
     ],
   },
-  plugins: getPlugins(),
   resolve: {
     alias: {
       // 这个为src配置别名，非必需，为方便而已
@@ -186,26 +128,5 @@ module.exports = {
     // 在import这些拓展名的文件时，可以省略拓展名
     extensions: ['*', '.js', '.json', '.ts', '.tsx'],
   },
-  optimization: isDev
-    ? undefined
-    : {
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            vendors: {
-              chunks: 'all',
-              test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom|mobx|mobx-react)/,
-              priority: 100,
-              name: 'vendors',
-              enforce: true,
-            },
-            common: {
-              chunks: 'all',
-              minChunks: 2,
-              name: 'commons',
-              priority: 80,
-            },
-          },
-        },
-      },
+  externals: [nodeExternals()],
 };

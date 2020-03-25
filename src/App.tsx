@@ -1,14 +1,12 @@
-import * as React from 'react';
+import React from 'react';
+import { Switch } from 'react-router-dom';
+import { renderRoutes } from 'react-router-config';
 
 import './style.less';
+import routes from './router/routes';
 
 export default class App extends React.Component {
   public render() {
-    return (
-      <div className="hero">
-        <h2 className="hero-1">REACT</h2>
-        <h2 className="hero-2">REACT</h2>
-      </div>
-    );
+    return <Switch>{renderRoutes(routes)}</Switch>;
   }
 }
