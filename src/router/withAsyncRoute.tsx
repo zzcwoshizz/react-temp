@@ -48,7 +48,6 @@ export default function withAsyncRoute(Comp: any) {
     }
 
     render() {
-      console.log(process.env.__SERVER__, process.env.__CLIENT__);
       let pageData = {};
       if (process.env.__SERVER__) {
         pageData = { ...this.context[this.state.path] };

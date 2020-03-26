@@ -47,6 +47,8 @@ if (isDev) {
 } else {
 }
 
+const uri = 'http://localhost:' + env.PORT;
+const ip = 'http://' + require('ip').address() + ':' + env.PORT;
 const start = async () => {
   const render = new ServerRender();
   render.template = template.replace('<!--vendor-assets-->', vendors.join(''));
@@ -110,6 +112,8 @@ const start = async () => {
 
   app.listen(env.PORT, () => {
     if (isDev) {
+      console.log(chalk.cyan('\n' + '- Local: ' + uri + '\n'));
+      console.log(chalk.cyan('- On your Network: ' + ip + '\n'));
       // openBrowser(`http://localhost:${env.PORT}`);
     }
   });

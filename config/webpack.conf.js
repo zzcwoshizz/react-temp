@@ -66,7 +66,7 @@ function getPlugins() {
       compilationSuccessInfo: {
         messages: [],
       },
-      clearConsole: false,
+      clearConsole: true,
     }),
     // 热更新相关
     new webpack.NamedModulesPlugin(),
