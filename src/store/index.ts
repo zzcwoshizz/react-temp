@@ -30,10 +30,13 @@ export class Store {
   }
 }
 
+let stores;
 function createStore(initialState) {
-  const stores = new Store(initialState);
+  stores = new Store(initialState);
 
   return stores;
 }
+
+export const getStores = () => stores;
 
 export default createStore;

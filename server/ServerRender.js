@@ -20,8 +20,9 @@ class ServerRender {
 
     // 匹配路由
     let url = req.url;
+    let pageData;
     try {
-      await this._matchRoute(req, store);
+      pageData = await this._matchRoute(req, store);
     } catch (e) {
       throw e;
     }
@@ -33,7 +34,7 @@ class ServerRender {
       stats: this.clientStats,
       entrypoints: [this.entryName], // 入口entry
     });
-    const App = this.createApp(context, url, store);
+    const App = this.createApp(context, url, store, pageData);
     const htmlStr = ReactDOM.renderToString(
       React.createElement(ChunkExtractorManager, { extractor }, App)
     );
@@ -46,6 +47,7 @@ class ServerRender {
     // 获取assets
     const assets = this._getAssets(extractor);
     const storeJSON = JSON.stringify(store);
+    const dataJSON = JSON.stringify(pageData);
 
     return {
       statusCode,
@@ -53,14 +55,14 @@ class ServerRender {
         .replace('<!--react-ssr-head-->', `${assets.style}${assets.css}`)
         .replace(
           '<!--react-ssr-outlet-->',
-          `<script type="text/javascript">window.__INITIAL_STATE__=${storeJSON}</script><div id="app">${htmlStr}</div>${assets.js}`
+          `<script type="text/javascript">window.__INITIAL_STATE__=${storeJSON};window.__INITIAL_DATA__=${dataJSON}</script><div id="app">${htmlStr}</div>${assets.js}`
         ),
     };
   };
 
   async _matchRoute(req, store) {
     let promises = [];
-    const matchs = matchRoutes(this.routes, req.url);
+    const matchs = matchRoutes(this.routes, req.path);
     for (let { route, match } of matchs) {
       let component = route.component;
       if (!component) {
@@ -71,11 +73,18 @@ class ServerRender {
         component = (await component.load()).default;
       }
       if (component.asyncData) {
-        promises.push(component.asyncData(store, { match, req }));
+        promises.push(component.asyncData(store, { match }));
+      } else {
+        promises.push(Promise.resolve({}));
       }
     }
     // resolve asyncData
-    await Promise.all(promises);
+    const pageData = await Promise.all(promises);
+    let obj = {};
+    pageData.forEach((data, index) => {
+      obj[matchs[index].match.path] = data;
+    });
+    return obj;
   }
 
   _getAssets(extractor) {

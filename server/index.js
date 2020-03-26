@@ -2,6 +2,7 @@ const vm = require('vm');
 const fs = require('fs');
 const path = require('path');
 
+const chalk = require('chalk');
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const openBrowser = require('../scripts/openBrowser');
@@ -97,7 +98,12 @@ const start = async () => {
         res.statusCode = statusCode;
         res.send(html);
       })
-      .catch(() => {
+      .catch(err => {
+        if (isDev) {
+          console.error(err);
+        } else {
+          console.error(new Date() + '-Error: ' + chalk.red(err.message));
+        }
         res.status(500).send('Internal server error');
       });
   });

@@ -32,6 +32,10 @@ function getPlugins() {
       tslint: paths.tsLintPath,
     }),
     new LoadablePlugin(),
+    new webpack.DefinePlugin({
+      'process.env.__SERVER__': false,
+      'process.env.__CLIENT__': true,
+    }),
   ];
   const prodPlugins = [
     require('autoprefixer'),

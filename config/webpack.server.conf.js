@@ -30,6 +30,10 @@ module.exports = {
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1,
     }),
+    new webpack.DefinePlugin({
+      'process.env.__SERVER__': true,
+      'process.env.__CLIENT__': false,
+    }),
   ],
   module: {
     rules: [
