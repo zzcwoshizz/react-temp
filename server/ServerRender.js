@@ -2,6 +2,7 @@ const ReactDOM = require('react-dom/server');
 const React = require('react');
 const { ChunkExtractor, ChunkExtractorManager } = require('@loadable/server');
 const { matchRoutes } = require('react-router-config');
+const { Helmet } = require('react-helmet');
 
 const paths = require('../config/paths');
 
@@ -44,6 +45,14 @@ class ServerRender {
       statusCode = context.statusCode;
     }
 
+    const helmet = Helmet.renderStatic();
+    const headerStr =
+      helmet.meta.toString() +
+      helmet.title.toString() +
+      helmet.link.toString() +
+      helmet.script.toString() +
+      helmet.style.toString();
+
     // 获取assets
     const assets = this._getAssets(extractor);
     const storeJSON = JSON.stringify(store);
@@ -52,7 +61,10 @@ class ServerRender {
     return {
       statusCode,
       html: this.template
-        .replace('<!--react-ssr-head-->', `${assets.style}${assets.css}`)
+        .replace(
+          '<!--react-ssr-head-->',
+          `${headerStr}${assets.style}${assets.css}`
+        )
         .replace(
           '<!--react-ssr-outlet-->',
           `<script type="text/javascript">window.__INITIAL_STATE__=${storeJSON};window.__INITIAL_DATA__=${dataJSON}</script><div id="app">${htmlStr}</div>${assets.js}`

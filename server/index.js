@@ -36,10 +36,8 @@ Object.keys(proxy).forEach(key => {
   app.use(key, createProxyMiddleware(proxy[key]));
 });
 
-const template = fs.readFileSync(
-  path.resolve(__dirname, '../src/index.html'),
-  'utf-8'
-);
+const template =
+  '<!DOCTYPE html><html lang="en"><head><!--react-ssr-head--></head><body><!--vendor-assets--><!--react-ssr-outlet--></body></html>';
 
 const vendors = [];
 if (isDev) {

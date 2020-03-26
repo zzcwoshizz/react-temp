@@ -7,7 +7,7 @@ import { loadableReady } from '@loadable/component';
 
 import createStore from './store';
 import App from './App';
-import { PageDataContext } from './PageDataContext';
+import { PageDataContext } from '@/common/PageDataContext';
 
 const storeData = window.__INITIAL_STATE__;
 const pageData = window.__INITIAL_DATA__;

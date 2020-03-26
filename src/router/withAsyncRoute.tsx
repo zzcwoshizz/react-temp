@@ -1,7 +1,8 @@
 import React from 'react';
 import { getStores } from '@/store';
 
-import { PageDataContext } from '@/PageDataContext';
+import { PageDataContext } from '@/common/PageDataContext';
+import Head from '@/common/Head';
 
 let first = true; // 第一次进入页面
 let _current: any; // 当前渲染组件
@@ -59,7 +60,10 @@ export default function withAsyncRoute(Comp: any) {
         }
       }
 
-      return <Comp {...this.props} pageData={pageData} />;
+      return [
+        <Head key="0" title="React-Server side render" />,
+        <Comp key="1" {...this.props} pageData={pageData} />,
+      ];
     }
   };
 }

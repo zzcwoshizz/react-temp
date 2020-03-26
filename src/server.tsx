@@ -5,7 +5,7 @@ import { Provider } from 'mobx-react';
 import createStore from './store';
 import App from './App';
 import routes from '@/router/routes';
-import { PageDataContext } from './PageDataContext';
+import { PageDataContext } from '@/common/PageDataContext';
 
 const createApp = (context, url, store, pageData) => {
   const Root = () => {
