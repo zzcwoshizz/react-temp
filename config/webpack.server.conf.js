@@ -18,7 +18,6 @@ let hash = isDev ? 'hash' : 'contenthash';
 // TODU 项目大了之后可加入happypack和thread-loader加速构建速度
 module.exports = {
   target: 'node',
-  node: false,
   mode: isDev ? 'development' : 'production',
   entry: { [paths.entry]: path.resolve(paths.srcPath, 'server.tsx') },
   output: {
