@@ -15,9 +15,9 @@ export default function withAsyncRoute(Comp: any) {
   return class AsyncRoute extends React.Component<any, any> {
     static contextType = PageDataContext;
     // 服务端调用
-    static async asyncData(store, { match, cookies }) {
+    static async asyncData(store, { match, cookies, req }) {
       return Comp.asyncData
-        ? await Comp.asyncData(store, { match, cookies })
+        ? await Comp.asyncData(store, { match, cookies, req })
         : {};
     }
 

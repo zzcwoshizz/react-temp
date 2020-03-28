@@ -87,7 +87,7 @@ class ServerRender {
         component = (await component.load()).default;
       }
       if (component.asyncData) {
-        promises.push(component.asyncData(store, { match, cookies }));
+        promises.push(component.asyncData(store, { match, cookies, req }));
       } else {
         promises.push(Promise.resolve({}));
       }
