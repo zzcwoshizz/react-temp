@@ -1,9 +1,11 @@
 import React from 'react';
 import Cookies from 'js-cookie';
+import { Request } from 'express';
 
 import { getStores } from '@/store';
 import { PageDataContext } from '@/common/PageDataContext';
 import Head from '@/common/Head';
+import { match } from 'react-router-dom';
 
 let first = true; // 第一次进入页面
 let _current: any; // 当前渲染组件
@@ -11,15 +13,38 @@ if (process.env.__CLIENT__) {
   window.addEventListener('popstate', e => {});
 }
 
+export type AsyncFunction<
+  S = any,
+  Params extends { [K in keyof Params]?: string } = {}
+> = (
+  store: S,
+  params: {
+    match: match<Params>;
+    cookies: { [K in keyof Params]?: string };
+    req?: Request;
+  }
+) => Promise<any>;
+export interface FunctionView<
+  S = any,
+  Params extends { [K in keyof Params]?: string } = {}
+> {
+  asyncData: AsyncFunction<S, Params>;
+}
+
 export default function withAsyncRoute(Comp: any) {
   return class AsyncRoute extends React.Component<any, any> {
     static contextType = PageDataContext;
     // 服务端调用
-    static async asyncData(store, { match, cookies, req }) {
-      return Comp.asyncData
-        ? await Comp.asyncData(store, { match, cookies, req })
-        : {};
-    }
+    static asyncData: AsyncFunction = async (
+      store,
+      { match, cookies, req }
+    ) => {
+      if (Comp.asyncData) {
+        return await Comp.asyncData(store, { match, cookies, req });
+      } else {
+        return {};
+      }
+    };
 
     constructor(props, context) {
       super(props, context);
