@@ -4,6 +4,7 @@ const path = require('path');
 
 const chalk = require('chalk');
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const openBrowser = require('../scripts/openBrowser');
 
@@ -35,6 +36,8 @@ const proxy = {
 Object.keys(proxy).forEach(key => {
   app.use(key, createProxyMiddleware(proxy[key]));
 });
+
+app.use(cookieParser());
 
 const template =
   '<!DOCTYPE html><html lang="en"><head><!--react-ssr-head--></head><body><!--vendor-assets--><!--react-ssr-outlet--></body></html>';

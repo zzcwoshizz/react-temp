@@ -73,6 +73,8 @@ class ServerRender {
   };
 
   async _matchRoute(req, store) {
+    const cookies = req.cookies;
+
     let promises = [];
     const matchs = matchRoutes(this.routes, req.path);
     for (let { route, match } of matchs) {
@@ -85,7 +87,7 @@ class ServerRender {
         component = (await component.load()).default;
       }
       if (component.asyncData) {
-        promises.push(component.asyncData(store, { match }));
+        promises.push(component.asyncData(store, { match, cookies }));
       } else {
         promises.push(Promise.resolve({}));
       }

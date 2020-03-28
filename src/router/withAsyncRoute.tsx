@@ -1,6 +1,7 @@
 import React from 'react';
-import { getStores } from '@/store';
+import Cookies from 'js-cookie';
 
+import { getStores } from '@/store';
 import { PageDataContext } from '@/common/PageDataContext';
 import Head from '@/common/Head';
 
@@ -14,8 +15,10 @@ export default function withAsyncRoute(Comp: any) {
   return class AsyncRoute extends React.Component<any, any> {
     static contextType = PageDataContext;
     // 服务端调用
-    static async asyncData(store, { match }) {
-      return Comp.asyncData ? await Comp.asyncData(store, { match }) : {};
+    static async asyncData(store, { match, cookies }) {
+      return Comp.asyncData
+        ? await Comp.asyncData(store, { match, cookies })
+        : {};
     }
 
     constructor(props, context) {
@@ -30,8 +33,9 @@ export default function withAsyncRoute(Comp: any) {
     // 客户端调用
     async asyncData() {
       const { match } = this.props;
+      const cookies = Cookies.getJSON();
       const pageData = Comp.asyncData
-        ? await Comp.asyncData(getStores(), { match })
+        ? await Comp.asyncData(getStores(), { match, cookies })
         : {};
       this.setState({
         pageData,
