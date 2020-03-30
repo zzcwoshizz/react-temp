@@ -96,7 +96,7 @@ class ServerRender {
     const pageData = await Promise.all(promises);
     let obj = {};
     pageData.forEach((data, index) => {
-      obj[matchs[index].match.path] = data;
+      obj[matchs[index].match.url] = data;
     });
     return obj;
   }

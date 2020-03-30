@@ -50,8 +50,8 @@ export default function withAsyncRoute(Comp: any) {
       super(props, context);
 
       this.state = {
-        path: props.match.path,
-        pageData: { ...context[props.match.path] },
+        url: props.match.url,
+        pageData: { ...context[props.match.url] },
       };
     }
 
@@ -87,10 +87,10 @@ export default function withAsyncRoute(Comp: any) {
     render() {
       let pageData = {};
       if (process.env.__SERVER__) {
-        pageData = { ...this.context[this.state.path] };
+        pageData = { ...this.context[this.state.url] };
       } else {
         if (first) {
-          pageData = this.context[this.state.path];
+          pageData = this.context[this.state.url];
         } else {
           pageData = this.state.pageData;
         }
