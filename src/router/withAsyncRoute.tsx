@@ -51,7 +51,7 @@ export default function withAsyncRoute(Comp: any) {
 
       this.state = {
         path: props.match.path,
-        pageData: {},
+        pageData: { ...context[props.match.path] },
       };
     }
 
@@ -65,6 +65,13 @@ export default function withAsyncRoute(Comp: any) {
       this.setState({
         pageData,
       });
+    }
+
+    componentDidUpdate(prevProps) {
+      // 当路由发生改变时进行数据获取
+      if (this.props.location.key !== prevProps.location.key) {
+        this.asyncData();
+      }
     }
 
     async componentDidMount() {
@@ -83,9 +90,9 @@ export default function withAsyncRoute(Comp: any) {
         pageData = { ...this.context[this.state.path] };
       } else {
         if (first) {
-          pageData = { ...this.context[this.state.path] };
+          pageData = this.context[this.state.path];
         } else {
-          pageData = { ...this.state.pageData };
+          pageData = this.state.pageData;
         }
       }
 
