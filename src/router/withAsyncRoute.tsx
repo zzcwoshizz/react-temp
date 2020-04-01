@@ -74,11 +74,15 @@ export default function withAsyncRoute(Comp: any) {
       }
     }
 
+    componentWillUnmount() {
+      // 组件unmount时设置为false
+      first = false;
+    }
+
     async componentDidMount() {
       _current = this;
       if (first) {
         // 首次进入页面不重新获取数据
-        first = false;
         return;
       }
       await this.asyncData();
