@@ -80,7 +80,7 @@ const start = async () => {
     ));
 
     const serverEntry = require(path.resolve(
-      serverStats.outputPath,
+      paths.buildPath,
       serverStats.entrypoints[paths.entry].assets[0]
     ));
 
