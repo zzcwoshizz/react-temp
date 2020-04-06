@@ -2,19 +2,20 @@ import loadable from '@loadable/component';
 
 import { StatusRoute_NotFound } from './StatusRoute';
 import { IRouteConfig } from './mapRoutes';
+import withAsyncRoute from './withAsyncRoute';
 
 const routes: IRouteConfig[] = [
   {
     path: '/hello',
-    component: loadable(() => import('@/views/Hello')),
+    component: withAsyncRoute(loadable(() => import('@/views/Hello'))),
   },
   {
     path: '/',
-    component: loadable(() => import('@/views/Home')),
+    component: withAsyncRoute(loadable(() => import('@/views/Home'))),
     exact: true,
   },
   {
-    component: StatusRoute_NotFound,
+    component: withAsyncRoute(StatusRoute_NotFound),
   },
 ];
 

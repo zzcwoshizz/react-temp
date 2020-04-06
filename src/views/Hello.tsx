@@ -3,7 +3,6 @@ import { observer, inject } from 'mobx-react';
 import { RouteChildrenProps } from 'react-router-dom';
 
 import { UserStore, Store } from '@/store';
-import withAsyncRoute from '@/router/withAsyncRoute';
 
 interface Props extends RouteChildrenProps {
   user?: UserStore;
@@ -45,4 +44,4 @@ class Hello extends Component<Props> {
   }
 }
 
-export default withAsyncRoute(Hello);
+export default Hello;

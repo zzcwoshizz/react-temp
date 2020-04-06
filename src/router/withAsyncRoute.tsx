@@ -28,8 +28,20 @@ export interface FunctionView<
   S = any,
   Params extends { [K in keyof Params]?: string } = {}
 > {
-  asyncData: AsyncFunction<S, Params>;
+  asyncData?: AsyncFunction<S, Params>;
 }
+
+const loadComponent = async component => {
+  while (true) {
+    if (component.preload) {
+      // 异步组件
+      component = (await component.load()).default;
+    } else {
+      break;
+    }
+  }
+  return component;
+};
 
 export default function withAsyncRoute(Comp: any) {
   return class AsyncRoute extends React.Component<any, any> {
@@ -39,8 +51,9 @@ export default function withAsyncRoute(Comp: any) {
       store,
       { match, cookies, req }
     ) => {
-      if (Comp.asyncData) {
-        return await Comp.asyncData(store, { match, cookies, req });
+      const component = await loadComponent(Comp);
+      if (component.asyncData) {
+        return await component.asyncData(store, { match, cookies, req });
       } else {
         return {};
       }
@@ -59,8 +72,9 @@ export default function withAsyncRoute(Comp: any) {
     async asyncData() {
       const { match } = this.props;
       const cookies = Cookies.getJSON();
-      const pageData = Comp.asyncData
-        ? await Comp.asyncData(getStores(), { match, cookies })
+      const component = await loadComponent(Comp);
+      const pageData = component.asyncData
+        ? await component.asyncData(getStores(), { match, cookies })
         : {};
       this.setState({
         pageData,

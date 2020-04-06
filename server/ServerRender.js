@@ -82,10 +82,6 @@ class ServerRender {
       if (!component) {
         continue;
       }
-      if (component.preload) {
-        // 异步组件
-        component = (await component.load()).default;
-      }
       if (component.asyncData) {
         promises.push(component.asyncData(store, { match, cookies, req }));
       } else {

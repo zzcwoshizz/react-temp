@@ -3,7 +3,6 @@ import { observer, inject } from 'mobx-react';
 import { RouteChildrenProps } from 'react-router-dom';
 
 import { AppStore, Store } from '@/store';
-import withAsyncRoute from '@/router/withAsyncRoute';
 
 interface Props extends RouteChildrenProps {
   app?: AppStore;
@@ -45,4 +44,4 @@ class Home extends Component<Props> {
   }
 }
 
-export default withAsyncRoute(Home);
+export default Home;
