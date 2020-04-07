@@ -7,7 +7,7 @@ import { loadableReady } from '@loadable/component';
 
 import createStore from './store';
 import App from './App';
-import { PageDataContext } from '@/common/PageDataContext';
+import PageDataProvider from '@/common/PageDataContext';
 
 const storeData = window.__INITIAL_STATE__;
 const pageData = window.__INITIAL_DATA__;
@@ -17,9 +17,9 @@ const createApp = Comp => {
     return (
       <Provider {...createStore(storeData)}>
         <Router>
-          <PageDataContext.Provider value={pageData}>
+          <PageDataProvider defaultPageData={pageData}>
             <Comp />
-          </PageDataContext.Provider>
+          </PageDataProvider>
         </Router>
       </Provider>
     );

@@ -5,16 +5,16 @@ import { Provider } from 'mobx-react';
 import createStore from './store';
 import App from './App';
 import routes from '@/router/routes';
-import { PageDataContext } from '@/common/PageDataContext';
+import PageDataProvider from '@/common/PageDataContext';
 
 const createApp = (context, url, store, pageData) => {
   const Root = () => {
     return (
       <Provider {...store}>
         <StaticRouter context={context} location={url}>
-          <PageDataContext.Provider value={pageData}>
+          <PageDataProvider defaultPageData={pageData}>
             <App />
-          </PageDataContext.Provider>
+          </PageDataProvider>
         </StaticRouter>
       </Provider>
     );

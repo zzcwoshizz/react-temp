@@ -64,7 +64,7 @@ export default function withAsyncRoute(Comp: any) {
 
       this.state = {
         url: props.match.url,
-        pageData: { ...context[props.match.url] },
+        pageData: { ...context.pageData[props.match.url] },
       };
     }
 
@@ -79,6 +79,7 @@ export default function withAsyncRoute(Comp: any) {
       this.setState({
         pageData,
       });
+      this.context.setPageData({ [this.props.match.url]: pageData });
     }
 
     componentDidUpdate(prevProps) {
@@ -105,10 +106,10 @@ export default function withAsyncRoute(Comp: any) {
     render() {
       let pageData = {};
       if (process.env.__SERVER__) {
-        pageData = { ...this.context[this.state.url] };
+        pageData = { ...this.context.pageData[this.state.url] };
       } else {
         if (first) {
-          pageData = this.context[this.state.url];
+          pageData = this.state.pageData;
         } else {
           pageData = this.state.pageData;
         }
