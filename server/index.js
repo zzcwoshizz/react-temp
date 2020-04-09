@@ -63,6 +63,12 @@ const start = async () => {
       console,
       module,
       require,
+      setTimeout,
+      setInterval,
+      setImmediate,
+      clearTimeout,
+      clearInterval,
+      clearImmediate,
     };
     const vmScript = new vm.Script(serverBundle);
     vmScript.runInNewContext(sandbox);
