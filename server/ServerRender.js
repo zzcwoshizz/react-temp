@@ -83,7 +83,14 @@ class ServerRender {
         continue;
       }
       if (component.asyncData) {
-        promises.push(component.asyncData(store, { match, cookies, req }));
+        promises.push(
+          component.asyncData(store, {
+            match,
+            cookies,
+            query: req.query,
+            headers: req.headers,
+          })
+        );
       } else {
         promises.push(Promise.resolve({}));
       }

@@ -1,11 +1,11 @@
 import React from 'react';
 import Cookies from 'js-cookie';
-import { Request } from 'express';
 
 import { getStores } from '@/store';
 import { PageDataContext } from '@/common/PageDataContext';
 import Head from '@/common/Head';
 import { match } from 'react-router-dom';
+import { parseSearch } from '@/utils/url';
 
 let first = true; // 第一次进入页面
 let _current: any; // 当前渲染组件
@@ -21,7 +21,8 @@ export type AsyncFunction<
   params: {
     match: match<Params>;
     cookies: { [K in keyof Params]?: string };
-    req?: Request;
+    headers: { [K: string]: string };
+    query: { [K: string]: string };
   }
 ) => Promise<any>;
 export interface FunctionView<
@@ -49,11 +50,16 @@ export default function withAsyncRoute(Comp: any) {
     // 服务端调用
     static asyncData: AsyncFunction = async (
       store,
-      { match, cookies, req }
+      { match, cookies, headers, query }
     ) => {
       const component = await loadComponent(Comp);
       if (component.asyncData) {
-        return await component.asyncData(store, { match, cookies, req });
+        return await component.asyncData(store, {
+          match,
+          cookies,
+          headers,
+          query,
+        });
       } else {
         return {};
       }
@@ -74,7 +80,11 @@ export default function withAsyncRoute(Comp: any) {
       const cookies = Cookies.getJSON();
       const component = await loadComponent(Comp);
       const pageData = component.asyncData
-        ? await component.asyncData(getStores(), { match, cookies })
+        ? await component.asyncData(getStores(), {
+            match,
+            cookies,
+            query: parseSearch(this.props.location.search),
+          })
         : {};
       this.setState({
         pageData,
