@@ -21,6 +21,7 @@ module.exports = {
   mode: isDev ? 'development' : 'production',
   entry: { [paths.entry]: path.resolve(paths.srcPath, 'server.tsx') },
   output: {
+    publicPath: paths.publicPath,
     path: paths.buildPath,
     filename: `server.[${hash}].js`,
     libraryTarget: 'commonjs2',
@@ -30,6 +31,7 @@ module.exports = {
       maxChunks: 1,
     }),
     new webpack.DefinePlugin({
+      'process.env': JSON.stringify(env),
       'process.env.__SERVER__': true,
       'process.env.__CLIENT__': false,
     }),
@@ -46,7 +48,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(png|jpg|jfif|jpeg|gif)$/,
+        test: /\.(png|jpg|jfif|jpeg|gif|svg)$/,
         use: [
           {
             loader: 'url-loader',
