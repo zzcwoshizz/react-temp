@@ -33,6 +33,7 @@ function getPlugins() {
     }),
     new LoadablePlugin(),
     new webpack.DefinePlugin({
+      'process.env': JSON.stringify(env),
       'process.env.__SERVER__': false,
       'process.env.__CLIENT__': true,
     }),
@@ -104,7 +105,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(png|jpg|jfif|jpeg|gif)$/,
+        test: /\.(png|jpg|jfif|jpeg|gif|svg)$/,
         use: [
           {
             loader: 'url-loader',

@@ -24,7 +24,7 @@ if (isDev) {
 
 const proxy = {
   '/api': {
-    target: 'http://localhost:3000',
+    target: env.API_PATH,
     secure: false,
     pathRewrite: { '^/api': '' },
     changeOrigin: true,
