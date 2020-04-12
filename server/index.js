@@ -103,9 +103,13 @@ const start = async () => {
   app.get('*', (req, res) => {
     render
       .renderToString(req, res)
-      .then(({ html, statusCode }) => {
-        res.statusCode = statusCode;
-        res.send(html);
+      .then(({ html, statusCode, location }) => {
+        if (statusCode === 301) {
+          res.redirect(location);
+        } else {
+          res.statusCode = statusCode;
+          res.send(html);
+        }
       })
       .catch(err => {
         if (isDev) {

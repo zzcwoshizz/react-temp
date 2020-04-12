@@ -18,6 +18,7 @@ class ServerRender {
     const store = this.createStore({});
 
     let statusCode = 200;
+    let location;
 
     // 匹配路由
     let url = req.url;
@@ -40,6 +41,11 @@ class ServerRender {
       React.createElement(ChunkExtractorManager, { extractor }, App)
     );
 
+    if (context.action && context.action === 'REPLACE') {
+      statusCode = 302;
+      location = context.url;
+    }
+
     // statusCode不为空表示匹配失败，返回错误的http code
     if (context.statusCode) {
       statusCode = context.statusCode;
@@ -59,6 +65,7 @@ class ServerRender {
     const dataJSON = JSON.stringify(pageData);
 
     return {
+      location,
       statusCode,
       html: this.template
         .replace(
@@ -83,7 +90,14 @@ class ServerRender {
         continue;
       }
       if (component.asyncData) {
-        promises.push(component.asyncData(store, { match, cookies, req }));
+        promises.push(
+          component.asyncData(store, {
+            match,
+            cookies,
+            query: req.query,
+            headers: req.headers,
+          })
+        );
       } else {
         promises.push(Promise.resolve({}));
       }
