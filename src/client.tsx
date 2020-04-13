@@ -7,19 +7,16 @@ import { loadableReady } from '@loadable/component';
 
 import createStore from './store';
 import App from './App';
-import PageDataProvider from '@/common/PageDataContext';
 
 const storeData = window.__INITIAL_STATE__;
 const pageData = window.__INITIAL_DATA__;
 
-const createApp = Comp => {
+const createApp = () => {
   const Root = () => {
     return (
       <Provider {...createStore(storeData)}>
         <Router>
-          <PageDataProvider defaultPageData={pageData}>
-            <Comp />
-          </PageDataProvider>
+          <App defaultPageData={pageData} />
         </Router>
       </Provider>
     );
@@ -29,7 +26,7 @@ const createApp = Comp => {
 };
 
 loadableReady().then(() => {
-  ReactDOM.hydrate(createApp(App), document.getElementById('app'));
+  ReactDOM.hydrate(createApp(), document.getElementById('app'));
 
   window.__INITIAL_STATE__ = null;
   window.__INITIAL_DATA__ = {};

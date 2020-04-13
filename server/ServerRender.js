@@ -12,6 +12,7 @@ class ServerRender {
   createStore;
   clientStats;
   routes;
+  asyncData;
   template;
 
   renderToString = async req => {
@@ -89,18 +90,15 @@ class ServerRender {
       if (!component) {
         continue;
       }
-      if (component.asyncData) {
-        promises.push(
-          component.asyncData(store, {
-            match,
-            cookies,
-            query: req.query,
-            headers: req.headers,
-          })
-        );
-      } else {
-        promises.push(Promise.resolve({}));
-      }
+      promises.push(
+        this.asyncData(store, {
+          match,
+          cookies,
+          query: req.query,
+          headers: req.headers,
+          Component: component,
+        })
+      );
     }
     // resolve asyncData
     const pageData = await Promise.all(promises);

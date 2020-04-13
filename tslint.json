@@ -40,7 +40,8 @@
     "no-unused-expression": false,
     "prefer-for-of": false,
     "max-classes-per-file": true,
-    "member-access": false
+    "member-access": false,
+    "one-variable-per-declaration": false
   },
   "rulesDirectory": [],
   "linterOptions": {

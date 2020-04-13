@@ -14,9 +14,6 @@ interface Props extends RouteChildrenProps {
 class Home extends Component<Props> {
   static asyncData(store: Store) {
     return new Promise(resolve => {
-      const setTimeout = process.env.__CLIENT__
-        ? window.setTimeout
-        : require('timers').setTimeout;
       setTimeout(() => {
         store.app.appVersion = '2.0.0';
         resolve({ home: 'Home' });

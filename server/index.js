@@ -75,6 +75,7 @@ const start = async () => {
     render.createApp = sandbox.module.exports.createApp;
     render.createStore = sandbox.module.exports.createStore;
     render.routes = sandbox.module.exports.routes;
+    render.asyncData = sandbox.module.exports.asyncData;
   };
 
   if (isDev) {
@@ -93,6 +94,7 @@ const start = async () => {
     render.createApp = serverEntry.createApp;
     render.createStore = serverEntry.createStore;
     render.routes = serverEntry.routes;
+    render.asyncData = serverEntry.asyncData;
     const clientStats = require(path.resolve(
       paths.buildPath,
       'loadable-stats.json'

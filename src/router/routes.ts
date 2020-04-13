@@ -1,21 +1,24 @@
 import loadable from '@loadable/component';
+import { RouteConfig } from 'react-router-config';
 
 import { StatusRoute_NotFound } from './StatusRoute';
-import { IRouteConfig } from './mapRoutes';
-import withAsyncRoute from './withAsyncRoute';
+
+export interface IRouteConfig extends RouteConfig {
+  auth?: boolean;
+}
 
 const routes: IRouteConfig[] = [
   {
     path: '/hello',
-    component: withAsyncRoute(loadable(() => import('@/views/Hello'))),
+    component: loadable(() => import('@/views/Hello')),
   },
   {
     path: '/',
-    component: withAsyncRoute(loadable(() => import('@/views/Home'))),
+    component: loadable(() => import('@/views/Home')),
     exact: true,
   },
   {
-    component: withAsyncRoute(StatusRoute_NotFound),
+    component: StatusRoute_NotFound,
   },
 ];
 

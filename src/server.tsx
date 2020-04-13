@@ -3,18 +3,15 @@ import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'mobx-react';
 
 import createStore from './store';
-import App from './App';
+import App, { asyncData } from './App';
 import routes from '@/router/routes';
-import PageDataProvider from '@/common/PageDataContext';
 
 const createApp = (context, url, store, pageData) => {
   const Root = () => {
     return (
       <Provider {...store}>
         <StaticRouter context={context} location={url}>
-          <PageDataProvider defaultPageData={pageData}>
-            <App />
-          </PageDataProvider>
+          <App defaultPageData={pageData} />
         </StaticRouter>
       </Provider>
     );
@@ -23,4 +20,4 @@ const createApp = (context, url, store, pageData) => {
   return <Root />;
 };
 
-export { createApp, createStore, routes };
+export { createApp, createStore, routes, asyncData };
