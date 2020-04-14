@@ -97,12 +97,25 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
         exclude: /node_modules/,
-        options: {
-          transpileOnly: true,
-          getCustomTransformers: () => ({ before: [loadableTransformer] }),
-        },
+        use: [
+          {
+            loader: 'thread-loader',
+            options: {
+              // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+              workers: require('os').cpus().length - 1,
+              poolTimeout: isDev ? Infinity : 2000, // set this to Infinity in watch mode - see https://github.com/webpack-contrib/thread-loader
+            },
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              happyPackMode: true,
+              transpileOnly: true,
+              getCustomTransformers: () => ({ before: [loadableTransformer] }),
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpg|jfif|jpeg|gif|svg)$/,
