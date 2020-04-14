@@ -9,6 +9,10 @@ export interface IRouteConfig extends RouteConfig {
 
 const routes: IRouteConfig[] = [
   {
+    path: '/test',
+    component: loadable(() => import('@/views/Test')),
+  },
+  {
     path: '/hello',
     component: loadable(() => import('@/views/Hello')),
   },

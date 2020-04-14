@@ -6,17 +6,17 @@ import { UserStore, Store } from '@/store';
 
 interface Props extends RouteChildrenProps {
   user?: UserStore;
-  pageData: { hello: string };
+  pageData: { test: string };
 }
 
 @inject('user')
 @observer
-class Hello extends Component<Props> {
+class Test extends Component<Props> {
   static asyncData(store: Store) {
     return new Promise(resolve => {
       setTimeout(() => {
-        store.user.name = 'World';
-        resolve({ hello: 'Hello' });
+        store.user.name = 'im';
+        resolve({ test: 'Test' });
       }, 1000);
     });
   }
@@ -25,20 +25,20 @@ class Hello extends Component<Props> {
     const {
       user,
       history,
-      pageData: { hello },
+      pageData: { test },
     } = this.props;
 
     return (
-      <div className="hero" onClick={() => history.push('/test')}>
+      <div className="hero" onClick={() => history.push('/')}>
         <h2 className="hero-1">
-          {hello} {user.name}
+          {test} {user.name}
         </h2>
         <h2 className="hero-2">
-          {hello} {user.name}
+          {test} {user.name}
         </h2>
       </div>
     );
   }
 }
 
-export default Hello;
+export default Test;

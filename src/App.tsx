@@ -1,12 +1,14 @@
-import React, { Fragment, useRef, useState } from 'react';
-import { useLocation, useHistory, matchPath, match } from 'react-router-dom';
+import React, { useRef, useState } from 'react';
+import { useLocation, match } from 'react-router-dom';
 import { useUpdateEffect, useEffectOnce } from 'react-use';
 import Cookies from 'js-cookie';
+import { matchRoutes } from 'react-router-config';
 
 import './style.less';
 import routes from './router/routes';
 import { Store, getStores } from './store';
 import { parseSearch } from '@/utils/url';
+import mapRoute from './router/mapRoute';
 
 export type AsyncFunction<
   S = any,
@@ -63,18 +65,20 @@ export const asyncData: AsyncFunction<Store> = async (
   return pageData;
 };
 
+export const AppContext = React.createContext<any>({});
+
 interface Props {
   defaultPageData: any;
 }
 
 const App: React.SFC<Props> = React.memo(props => {
   const location = useLocation();
-  const history = useHistory();
 
   const [children, setChildren] = useState(null);
   const [pageData, setPageData] = useState(props.defaultPageData || {});
 
   const elementRef = useRef(null);
+  const prevPageData = useRef(pageData);
 
   useEffectOnce(() => {
     setChildren(elementRef.current);
@@ -82,69 +86,45 @@ const App: React.SFC<Props> = React.memo(props => {
 
   useUpdateEffect(() => {
     (async () => {
-      if (elementRef.current) {
-        const cookies = Cookies.getJSON();
-
-        const promises = [];
-        for (const element of elementRef.current) {
-          const component = element.type;
-          promises.push(
-            asyncData(getStores(), {
-              match: element.props.match,
-              cookies,
-              query: parseSearch(element.props.location.search),
-              Component: component,
-            })
-          );
+      const promises = [];
+      const matchs = matchRoutes(routes, location.pathname);
+      const cookies = Cookies.getJSON();
+      for (const { route, match } of matchs) {
+        const component = route.component;
+        if (!component) {
+          continue;
         }
-
-        const _pageData = await Promise.all(promises);
-        const obj = {};
-        _pageData.forEach((data, index) => {
-          obj[elementRef.current[index].props.match.url] = data;
-        });
-        setPageData({ ...pageData, ...obj });
-        setChildren(
-          React.Children.map(elementRef.current, child =>
-            React.cloneElement(child, {
-              ...child.props,
-              pageData: { ...obj[child.props.match.url] },
-            })
-          )
+        promises.push(
+          asyncData(getStores(), {
+            match,
+            cookies,
+            query: parseSearch(elementRef.current.props.location.search),
+            Component: component,
+          })
         );
       }
+      // resolve asyncData
+      const data = await Promise.all(promises);
+      const obj = {};
+      data.forEach((data, index) => {
+        obj[matchs[index].match.url] = data;
+      });
+
+      const pageData = { ...prevPageData.current, ...obj };
+      setPageData(pageData);
+      prevPageData.current = pageData;
+      setChildren(elementRef.current);
     })();
   }, [location.key]);
 
-  const elements = [];
-  let match = null;
-  routes.forEach((route, index) => {
-    if (match === null) {
-      match = matchPath(location.pathname, { ...route });
-      let Component;
-      if (match) {
-        if (route.render) {
-          Component = props => route.render({ ...props });
-        } else {
-          Component = route.component;
-        }
-        const element = (
-          <Component
-            key={location.key + '-' + index}
-            location={location}
-            history={history}
-            match={match}
-            route={route}
-            pageData={pageData[match.url]}
-          />
-        );
-        elements.push(element);
-      }
-    }
-  });
-  elementRef.current = elements;
+  const element = mapRoute(routes);
+  elementRef.current = element;
 
-  return <Fragment>{process.env.__SERVER__ ? elements : children}</Fragment>;
+  return (
+    <AppContext.Provider value={{ pageData: { ...pageData } }}>
+      {process.env.__SERVER__ ? element : children}
+    </AppContext.Provider>
+  );
 });
 
 export default App;
