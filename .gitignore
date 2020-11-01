@@ -23,7 +23,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.tern-project
-.directory
-.awcache
-.vscode
+tmp/
+.npmrc
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+cc-test-reporter
+.idea/
