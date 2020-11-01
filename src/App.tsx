@@ -1,17 +1,21 @@
-import React from 'react';
 import { ConfigProvider } from 'antd';
-import zhCN from 'antd/es/locale/zh_CN';
-import moment from 'moment';
-
-import Routes from './routes';
-
-moment.locale('zh-cn');
+import en_US from 'antd/es/locale/en_US';
+import React, { lazy, Suspense } from 'react';
+import { Route, Switch } from 'react-router-dom';
 
 export default class App extends React.Component {
   public render() {
     return (
-      <ConfigProvider locale={zhCN}>
-        <Routes />
+      <ConfigProvider locale={en_US}>
+        <Suspense fallback="...">
+          <Switch>
+            <Route
+              exact
+              path="/"
+              component={lazy(() => import('@/pages/Home'))}
+            />
+          </Switch>
+        </Suspense>
       </ConfigProvider>
     );
   }

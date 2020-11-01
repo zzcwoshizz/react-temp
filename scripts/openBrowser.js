@@ -16,7 +16,6 @@ function getBrowserEnv() {
   const args = process.env.BROWSER_ARGS
     ? process.env.BROWSER_ARGS.split(' ')
     : [];
-  console.log(value, args);
   let action;
   if (!value) {
     // Default.
@@ -38,14 +37,12 @@ function executeNodeScript(scriptPath, url) {
   });
   child.on('close', code => {
     if (code !== 0) {
-      console.log();
       console.log(
         chalk.red(
           'The script specified as BROWSER environment variable failed.'
         )
       );
       console.log(chalk.cyan(scriptPath) + ' exited with code ' + code + '.');
-      console.log();
       return;
     }
   });

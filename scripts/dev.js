@@ -10,6 +10,7 @@ const openBrowser = require('./openBrowser');
 
 const config = require('../config/webpack.conf');
 const env = require('../config/env');
+const paths = require('../config/paths');
 
 const compiler = webpack(config);
 const app = express();
@@ -27,12 +28,11 @@ app.use(
   hotMiddleWare(compiler, {
     path: '/__webpack_hmr',
     heartbeat: 10 * 1000,
-    log: false,
   })
 );
 
 // proxy
-Object.keys(proxy).forEach(key => {
+Object.keys(proxy).forEach((key) => {
   app.use(key, createProxyMiddleware(proxy[key]));
 });
 
@@ -45,14 +45,12 @@ app.use(
 // webpack
 app.use(
   middleware(compiler, {
-    logLevel: 'silent',
-    noInfo: true,
     publicPath: config.output.publicPath,
   })
 );
 
-app.use('/', express.static(path.resolve(__dirname, '../')));
+app.use('/', express.static(paths.staticPath));
 
 app.listen(env.PORT, () => {
-  // openBrowser(`http://localhost:${env.PORT}`);
+  openBrowser(`http://localhost:${env.PORT}`);
 });

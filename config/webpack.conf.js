@@ -1,13 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const AutoDllPlugin = require('autodll-webpack-plugin');
-const ForkTsChecker = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-const tsImportPluginFactory = require('ts-import-plugin');
 const env = require('./env');
 const paths = require('./paths');
 
@@ -28,13 +25,9 @@ function getPlugins() {
       inject: true,
       minify: !isDev,
     }),
-    new webpack.optimize.SplitChunksPlugin(),
-    new ForkTsChecker({
-      async: false,
-      checkSyntacticErrors: true,
-      watch: paths.srcPath,
-      tsconfig: paths.tsPath,
-      tslint: paths.tsLintPath,
+    new ESLintPlugin({
+      files: ['src'],
+      extensions: ['tsx', 'ts', 'js'],
     }),
   ];
   const prodPlugins = [
@@ -43,77 +36,49 @@ function getPlugins() {
       root: path.resolve(__dirname, '../'),
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].[hash].css',
-      chunkFilename: 'css/[name].[hash].css',
+      filename: 'css/[name].[fullhash].css',
+      chunkFilename: 'css/[name].[fullhash].css',
     }),
-    new CopyPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: path.resolve(paths.buildPath, 'static'),
-      },
-    ]),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '../public'),
+          to: paths.buildPath,
+        },
+      ],
+    }),
   ];
   const devPlugins = [
-    // 将一些不太可能改动的第三方库单独打包，会通过缓存极大提升打包速度
-    new AutoDllPlugin({
-      debug: isDev,
-      // will inject the DLL bundle to index.html
-      // default false
-      inject: true,
-      filename: '[name].[hash].js',
-      path: 'vendor',
-      entry: {
-        vendor: Object.keys(require('../package.json').dependencies),
-      },
-    }),
-    new FriendlyErrorsWebpackPlugin({
-      compilationSuccessInfo: {
-        messages: [
-          `Your application is running here: http:localhost:${env.PORT}`,
-        ],
-      },
-      clearConsole: true,
-    }),
-    // 热更新相关
-    new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
   ];
 
   return isDev ? _plugins.concat(devPlugins) : _plugins.concat(prodPlugins);
 }
 
-// TODU 项目大了之后可加入happypack和thread-loader加速构建速度
 module.exports = {
   mode: isDev ? 'development' : 'production',
   entry: isDev
     ? [
-        'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000',
         path.resolve(paths.srcPath, 'index.tsx'),
+        'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&overlay=true&reload=true',
       ]
     : path.resolve(paths.srcPath, 'index.tsx'),
   output: {
     path: paths.buildPath,
-    filename: 'js/[name].[hash].js',
+    filename: 'js/[name].[fullhash].js',
     publicPath: paths.publicPath,
   },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-        exclude: /node_modules/,
-        options: {
-          transpileOnly: true,
-          getCustomTransformers: () => ({
-            before: [
-              tsImportPluginFactory({
-                libraryName: 'antd',
-                libraryDirectory: 'es',
-                style: true,
-              }),
-            ],
-          }),
-        },
+        exclude: /(node_modules)/,
+        test: /\.(js|ts|tsx)$/,
+        use: [
+          require.resolve('thread-loader'),
+          {
+            loader: require.resolve('babel-loader'),
+          },
+        ],
       },
       {
         test: /\.(png|jpg|jfif|jpeg|gif)$/,
@@ -124,12 +89,11 @@ module.exports = {
               // 低于这个limit就直接转成base64插入到style里，不然以name的方式命名存放
               // 这里的单位时bit
               limit: 8192,
-              name: 'images/[hash:8].[name].[ext]',
+              name: 'images/[fullhash].[name].[ext]',
             },
           },
         ],
       },
-      // 字体图标啥的，跟图片分处理方式一样
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
@@ -137,7 +101,7 @@ module.exports = {
             loader: 'url-loader',
             options: {
               limit: 8192,
-              name: 'font/[hash:8].[name].[ext]',
+              name: 'font/[fullhash].[name].[ext]',
             },
           },
         ],
@@ -150,8 +114,6 @@ module.exports = {
       {
         // scss sass
         test: /\.s(c|a)ss$/,
-        // use里的loader执行顺序为从下到上，loader的顺序要注意
-        // 这里检测到scss/css文件后需要将后续处理loader都写在此use里,如果scss和css过分开检测处理，不能说先用scss-loader转成css，然后让它走/\.css/里的use
         use: [
           ...cssLoader,
           {
@@ -162,7 +124,6 @@ module.exports = {
             loader: 'sass-resources-loader',
             options: {
               resources: [
-                // 加载全局的scss文件
                 // path.resolve(__dirname, '../src/assets/styles/_variables.scss'),
               ],
             },
@@ -177,14 +138,15 @@ module.exports = {
           {
             loader: 'less-loader',
             options: {
-              javascriptEnabled: true,
+              lessOptions: {
+                javascriptEnabled: true,
+              },
             },
           },
           {
             loader: 'style-resources-loader',
             options: {
               patterns: [
-                // 加载全局的less文件
                 // path.resolve(__dirname, '../src/assets/styles/_variables.less'),
               ],
             },
@@ -196,10 +158,8 @@ module.exports = {
   plugins: getPlugins(),
   resolve: {
     alias: {
-      // 这个为src配置别名，非必需，为方便而已
       '@': paths.srcPath,
     },
-    // 在import这些拓展名的文件时，可以省略拓展名
     extensions: ['*', '.js', '.json', '.ts', '.tsx'],
   },
   optimization: isDev
@@ -210,7 +170,7 @@ module.exports = {
           cacheGroups: {
             vendors: {
               chunks: 'all',
-              test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom|react-loadable|nprogress|mobx-react-router|mobx-react|mobx|moment)/,
+              test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom|react-loadable|nprogress|moment)/,
               priority: 100,
               name: 'vendors',
             },

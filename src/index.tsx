@@ -1,19 +1,21 @@
 ///<reference types="webpack-env" />
+import '@/assets/styles/index.less';
+
+import { createBrowserHistory } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'mobx-react';
 import { Router } from 'react-router-dom';
 
-import '@/assets/styles/index.less';
-import store, { history } from './store';
 import App from './App';
 
 ReactDOM.render(
-  <Provider {...store}>
-    <Router history={history}>
-      <App />
-    </Router>
-  </Provider>,
+  <Router
+    history={createBrowserHistory({
+      basename: '/',
+    })}
+  >
+    <App />
+  </Router>,
   document.getElementById('app')
 );
 

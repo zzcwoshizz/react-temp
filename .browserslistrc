@@ -1,6 +1,6 @@
 # Browsers that we support
 
-> 1%
+>0.25%
 last 2 versions
-Firefox >= 20
-ie > 9
+not ie 11
+not OperaMini all
