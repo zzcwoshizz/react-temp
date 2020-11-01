@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development node scripts/dev.js",
     "build": "cross-env NODE_ENV=production webpack --config config/webpack.conf.js",
-    "lint": "eslint src --ext ts --ext tsx --ext js"
+    "lint": "eslint src --ext ts --ext tsx --ext js",
+    "type-check": "tsc --pretty --noEmit",
+    "type-check:watch": "tsc --pretty --noEmit --watch"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint"
+      "pre-commit": "yarn lint && yarn type-check"
     }
   },
   "repository": {
