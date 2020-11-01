@@ -16,6 +16,21 @@ const cssLoader = [
   ...(isDev ? [] : [{ loader: 'postcss-loader' }]),
 ];
 
+function mapChunks (name, regs, inc) {
+  return regs.reduce(
+    (result, test, index) => ({
+      ...result,
+      [`${name}${index}`]: {
+        chunks: 'initial',
+        enforce: true,
+        name: `${name}.${`0${index + (inc || 0)}`.slice(-2)}`,
+        test,
+      },
+    }),
+    {}
+  );
+}
+
 function getPlugins() {
   const _plugins = [
     new HtmlWebpackPlugin({
@@ -165,27 +180,16 @@ module.exports = {
   optimization: isDev
     ? undefined
     : {
+        runtimeChunk: 'single',
         splitChunks: {
-          chunks: 'all',
           cacheGroups: {
-            vendors: {
-              chunks: 'all',
-              test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom|react-loadable|nprogress|moment)/,
-              priority: 100,
-              name: 'vendors',
-            },
-            antd: {
-              chunks: 'all',
-              test: /[\\/]node_modules[\\/]antd/,
-              priority: 90,
-              name: 'antd',
-            },
-            commons: {
-              chunks: 'all',
-              minChunks: 2,
-              name: 'commons',
-              priority: 80,
-            },
+            ...mapChunks('react', [
+              /* 00 */ /node_modules\/(@fortawesome)/,
+              /* 01 */ /node_modules\/(classnames|prop-types|react|styled-components)/,
+            ]),
+            ...mapChunks('antd', [
+              /* 00 */ /node_modules\/(@ant-design|antd|rc-)/,
+            ]),
           },
         },
       },
