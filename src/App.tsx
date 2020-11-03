@@ -9,11 +9,7 @@ export default class App extends React.Component {
       <ConfigProvider locale={en_US}>
         <Suspense fallback="...">
           <Switch>
-            <Route
-              exact
-              path="/"
-              component={lazy(() => import('@/pages/Home'))}
-            />
+            <Route component={lazy(() => import('@/pages/Home'))} exact path="/" />
           </Switch>
         </Suspense>
       </ConfigProvider>

@@ -11,7 +11,7 @@ import App from './App';
 ReactDOM.render(
   <Router
     history={createBrowserHistory({
-      basename: '/',
+      basename: '/'
     })}
   >
     <App />

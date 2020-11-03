@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "@zzcwoshizz/config/lib/tsconfig.json",
   "exclude": [
     "dist/**/*",
     "**/dist/**/*"
