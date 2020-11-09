@@ -1591,10 +1591,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@zzcwoshizz/config@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@zzcwoshizz/config/-/config-0.0.3.tgz#9e81ef6ae6990102602053bee99a9f0d88cd9510"
-  integrity sha512-Im+mTrAAFoa4JD80QPKQkffgn0mfQfHo7ebj15GphUJTmx34+5wTErt4Qd+tEnG1EbCNAnKf+oHXRGlhLylc9w==
+"@zzcwoshizz/config@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@zzcwoshizz/config/-/config-0.1.1.tgz#3ab52d63ee4f1d61689774f4ef63d39817caf96c"
+  integrity sha512-wAyxtE/bguVBdbMPoojlScb2aqIGLBkV1SM3gpHecoxsFMa0dwuz8zBJ+JWn03sknTBUVIDoPlp5Mis5qbkUTQ==
   dependencies:
     "@babel/cli" "^7.12.1"
     "@babel/core" "^7.12.3"
